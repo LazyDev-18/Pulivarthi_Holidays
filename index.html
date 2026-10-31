@@ -138,7 +138,11 @@
         <div class="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
           <!-- Left: text -->
           <div class="max-w-xl">
+            <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-5">
+  Chowdary Holidays
+</h1>
             <span class="inline-flex items-center gap-2 bg-coral-500/20 text-coral-400 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 backdrop-blur-sm border border-coral-500/30">
+              
               <span class="w-1.5 h-1.5 rounded-full bg-coral-400 animate-ping"></span>
               24/7 Travel Concierge — Pan India
             </span>
@@ -287,6 +291,18 @@
             <h3 class="text-teal-800 font-display text-xl font-semibold mb-1">When are you traveling?</h3>
             <p class="text-stone-500 text-sm mb-5">Choose your preferred travel window & vehicle.</p>
             <div class="space-y-4">
+
+  <div>
+    <label class="block text-stone-600 text-sm mb-1.5">Pickup Location</label>
+    <input id="pickup-location" type="text" placeholder="Enter your pickup location"
+      class="w-full min-w-0 bg-sand-50 border border-stone-200 text-stone-700 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-coral-400" />
+  </div>
+
+  <div id="custom-destination-box" class="hidden">
+    <label class="block text-stone-600 text-sm mb-1.5">Destination</label>
+    <input id="custom-destination" type="text" placeholder="Enter your destination"
+      class="w-full min-w-0 bg-sand-50 border border-stone-200 text-stone-700 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-coral-400" />
+  </div>
               <div><label class="block text-stone-600 text-sm mb-1.5">Departure date</label><input id="dep-date" type="date" class="w-full bg-sand-50 border border-stone-200 text-stone-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-coral-400" /></div>
               <div><label class="block text-stone-600 text-sm mb-1.5">Travelers</label>
                 <select id="travelers" class="w-full bg-sand-50 border border-stone-200 text-stone-700 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-coral-400">
@@ -613,7 +629,9 @@
         b.addEventListener("click", () => {
           document.querySelectorAll(".dest-btn").forEach(x => { x.classList.remove("bg-coral-500","text-white"); x.classList.add("bg-sand-50","text-teal-800"); });
           b.classList.add("bg-coral-500","text-white"); b.classList.remove("bg-sand-50","text-teal-800");
-          selectedDest = d; document.getElementById("err-1").textContent = "";
+          selectedDest = d;
+document.getElementById("custom-destination-box").classList.toggle("hidden", d !== "Custom");
+document.getElementById("err-1").textContent = "";
         });
         destBox.appendChild(b);
       });
@@ -629,15 +647,77 @@
         });
       }
       function showStep(n) { document.querySelectorAll(".step-panel").forEach(p => p.classList.add("hidden")); document.getElementById("step-" + n).classList.remove("hidden"); updateIndicators(n); }
-      function nextStep(from) { if (from === 1 && !selectedDest) { document.getElementById("err-1").textContent = "Please pick a destination to continue."; return; } showStep(from + 1); }
-      function prevStep(from) { showStep(from - 1); }
+function nextStep(from) {
+  if (from === 1 && !selectedDest) {
+    document.getElementById("err-1").textContent = "Please pick a destination to continue.";
+    return;
+  }
+
+  if (from === 2) {
+    const pickup = document.getElementById("pickup-location").value.trim();
+    const customDestination = document.getElementById("custom-destination").value.trim();
+
+    if (!pickup) {
+      alert("Please enter your pickup location.");
+      return;
+    }
+
+    if (selectedDest === "Custom" && !customDestination) {
+      alert("Please enter your destination.");
+      return;
+    }
+  }
+
+  showStep(from + 1);
+}      function prevStep(from) { showStep(from - 1); }
       function submitTrip() {
-        const name = document.getElementById("cust-name").value.trim();
-        const phone = document.getElementById("cust-phone").value.trim();
-        const msg = document.getElementById("submit-msg");
-        if (!name || !phone) { msg.textContent = "Please enter your name and phone number."; return; }
-        msg.textContent = "Request received, " + name + "! For instant confirmation, call or WhatsApp us now.";
-      }
+    const name = document.getElementById("cust-name").value.trim();
+    const phone = document.getElementById("cust-phone").value.trim();
+    const date = document.getElementById("dep-date").value;
+    const travelers = document.getElementById("travelers").value;
+    const vehicle = document.getElementById("vehicle-choice").value;
+    const msg = document.getElementById("submit-msg");
+    const pickup = document.getElementById("pickup-location").value.trim();
+const customDestination = document.getElementById("custom-destination").value.trim();
+const destination = selectedDest === "Custom" ? customDestination : selectedDest;
+
+    if (!name || !phone) {
+        msg.textContent = "Please enter your name and phone number.";
+        return;
+    }
+
+    if (!/^[6-9]\d{9}$/.test(phone)) {
+        msg.textContent = "Please enter a valid 10-digit mobile number.";
+        return;
+    }
+
+    if (!selectedDest) {
+        msg.textContent = "Please select a destination.";
+        return;
+    }
+
+    const message = `
+New Booking Enquiry - Chowdary Holidays
+
+Customer Name: ${name}
+Phone: ${phone}
+Pickup Location: ${pickup}
+Destination: ${destination}
+Departure Date: ${date || "Not specified"}
+Travelers: ${travelers}
+Vehicle: ${vehicle}
+
+Please contact this customer regarding the booking.
+    `;
+
+    const whatsappURL =
+        "https://wa.me/919505819055?text=" +
+        encodeURIComponent(message);
+
+    window.open(whatsappURL, "_blank");
+
+    msg.textContent = "Your enquiry is ready! Please send the WhatsApp message to complete submission.";
+}
 
       /* ---------- Scroll Reveal ---------- */
       new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("in"); }); }, { threshold: 0.12 }).observe && document.querySelectorAll(".reveal").forEach(el => { new IntersectionObserver((entries, obs) => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); obs.unobserve(e.target); } }); }, { threshold: 0.12 }).observe(el); });
