@@ -2,45 +2,55 @@
 <html lang="en">
   <head>
     <!-- Optimized Smart Conversion Tracker by Chowdary Holidays -->
-<script>
-// Core Google Tracking Function
-function triggerGoogleConversion(actionUrl) {
-  gtag('event', 'conversion', {
-      'send_to': 'AW-18551105094/M75yCPHAirIdEMbM7Y1F',
-      'value': 1.0,
-      'currency': 'INR',
-      'event_callback': function () {
-        // Only redirect if a URL was passed and it's not a JavaScript event trigger
-        if (typeof(actionUrl) === 'string' && actionUrl.trim() !== '') {
-          window.location = actionUrl;
+<script async src="https://googletagmanager.com"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      // Registers your main tracking ID so Tag Assistant recognizes the page load
+      gtag('config', 'AW-18551105094');
+    </script>
+
+    <!-- 2. Optimized Smart Click Conversion Tracker by Chowdary Holidays -->
+    <script>
+    // Core Google Tracking Function
+    function triggerGoogleConversion(actionUrl) {
+      gtag('event', 'conversion', {
+          'send_to': 'AW-18551105094/M75yCPHAirIdEMbM7Y1F',
+          'value': 1.0,
+          'currency': 'INR',
+          'event_callback': function () {
+            // Only redirect if a URL was passed and it's not a JavaScript event trigger
+            if (typeof(actionUrl) === 'string' && actionUrl.trim() !== '') {
+              window.location = actionUrl;
+            }
+          }
+      });
+    }
+
+    // Master Page Listener to catch conversions automatically on click actions
+    document.addEventListener('DOMContentLoaded', function() {
+      document.body.addEventListener('click', function(event) {
+        // Find if the click or any of its parent containers is a link or button
+        var targetLink = event.target.closest('a');
+        var targetButton = event.target.closest('button');
+
+        // Catch Direct Mobile Call Clicks (Links starting with tel:)
+        if (targetLink && targetLink.getAttribute('href') && targetLink.getAttribute('href').startsWith('tel:')) {
+          triggerGoogleConversion(targetLink.href);
         }
-      }
-  });
-}
-
-// Master Page Listener to catch conversions automatically
-document.addEventListener('DOMContentLoaded', function() {
-  document.body.addEventListener('click', function(event) {
-    // Find if the click or any of its parent containers is a link
-    var targetLink = event.target.closest('a');
-    var targetButton = event.target.closest('button');
-
-    // 1. Catch Direct Mobile Call Clicks
-    if (targetLink && targetLink.getAttribute('href') && targetLink.getAttribute('href').startsWith('tel:')) {
-      triggerGoogleConversion(targetLink.href);
-    }
-    
-    // 2. Catch Custom Buttons (e.g., Book Package, Request Quote, Submit Inquiries)
-    else if (targetButton) {
-      // Fires if the button text indicates an conversion action
-      var btnText = targetButton.innerText.toLowerCase();
-      if (btnText.includes('call') || btnText.includes('book') || btnText.includes('quote') || btnText.includes('submit')) {
-        triggerGoogleConversion();
-      }
-    }
-  });
-});
-</script>
+        
+        // Catch Custom Click Targets (e.g., Book Package, Request Quote, Submit Inquiries)
+        else if (targetButton) {
+          var btnText = targetButton.innerText.toLowerCase();
+          if (btnText.includes('call') || btnText.includes('book') || btnText.includes('quote') || btnText.includes('submit')) {
+            triggerGoogleConversion();
+          }
+        }
+      });
+    });
+    </script>
 
 
     <meta charset="UTF-8" />
